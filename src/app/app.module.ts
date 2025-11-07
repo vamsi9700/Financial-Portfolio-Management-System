@@ -3,12 +3,12 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import {MaterialModule} from './material.module';
+import { MaterialModule } from './material.module';
 import { NavigationComponent } from './navigation/navigation.component';
 import { ToastrModule } from 'ngx-toastr';
 @NgModule({
   declarations: [
-    AppComponent,NavigationComponent
+    AppComponent, NavigationComponent
   ],
   imports: [
     BrowserModule,

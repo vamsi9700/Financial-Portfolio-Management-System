@@ -10,7 +10,7 @@ export interface Investment {
   providedIn: 'root'
 })
 export class InvestmentService {
-private investments: Investment[] = [];
+  private investments: Investment[] = [];
   constructor() { }
   createInvestment(investment: Investment): Observable<Investment> {
     debugger;

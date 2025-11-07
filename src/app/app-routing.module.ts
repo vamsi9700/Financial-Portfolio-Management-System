@@ -3,12 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { LoginComponent } from './login/login.component';
 
 const routes: Routes = [
-   { path: '', component: LoginComponent },
-  // {
-  //   path: '',
-  //   redirectTo: 'dashboard',   // 👈 default route
-  //   pathMatch: 'full'
-  // },
+  { path: '', component: LoginComponent },
   {
     path: 'dashboard',
     loadChildren: () =>
@@ -19,10 +14,6 @@ const routes: Routes = [
     loadChildren: () =>
       import('./investment/investment.module').then(m => m.InvestmentModule)
   },
-  // {
-  //   path: '**',
-  //   redirectTo: 'dashboard'  // 👈 wildcard fallback
-  // }
 ];
 
 @NgModule({

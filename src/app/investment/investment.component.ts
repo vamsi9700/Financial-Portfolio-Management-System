@@ -45,7 +45,7 @@ displayedColumns: string[] = ['id', 'assetType', 'quantity', 'purchasePrice', 'p
       this.investmentService.createInvestment(investmentData).subscribe({
         next: (response) => {
           debugger;
-          this.toastr.success('Investment added successfully!');
+          this.toastr.success('Investment saved successfully. See all investments for below table.');
           this.investmentForm.reset();
           this.loadInvestments();
         },

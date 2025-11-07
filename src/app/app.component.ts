@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { SharedDataService } from './service/shared-data.service';
 
 @Component({
   selector: 'app-root',
@@ -8,19 +9,23 @@ import { Router } from '@angular/router';
 })
 export class AppComponent implements OnInit {
   title = 'portfolio';
-  isLogin:boolean=false;
-  constructor(private router: Router){
-
+  isLogin: boolean = false;
+  constructor(private router: Router, private route: ActivatedRoute,
+    private shared: SharedDataService
+  ) {
+    this.shared.data$.subscribe(val => {
+      debugger;
+      this.isLogin = val;
+    });
   }
   ngOnInit(): void {
     debugger;
-    let user:any;
-    // user=localStorage.getItem("user");
-    this.isLogin = !this.router.url.includes('login');
-    if(user){
-      this.isLogin=true;
-    }else{
-      this.isLogin=false;
+    if (window.location.pathname == "/") {
+      this.isLogin = false;
+    } else {
+      this.isLogin = true;
     }
+    let isLogin: any = this.isLogin;
+    localStorage.setItem("isLogin", isLogin);
   }
 }

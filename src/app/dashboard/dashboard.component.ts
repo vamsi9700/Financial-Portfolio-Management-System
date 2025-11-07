@@ -1,7 +1,6 @@
 import { Component, OnChanges } from '@angular/core';
 import { AllocationItem, ChartService, PerformancePoint } from '../service/chart.service';
 import { ChartConfiguration, ChartOptions } from 'chart.js';
-
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
@@ -9,44 +8,38 @@ import { ChartConfiguration, ChartOptions } from 'chart.js';
 })
 export class DashboardComponent implements OnChanges {
   summaryData = [
-  { metric: 'Total Portfolio' },
-  { metric: 'Allocation Count' }
-];
-allocDisplayedColumns: string[] = ['assetType', 'percentage', 'value'];
-summaryDisplayedColumns: string[] = ['metric', 'value'];
-  recentPerformance:any[]=[];
+    { metric: 'Total Portfolio' },
+    { metric: 'Allocation Count' }
+  ];
+  allocDisplayedColumns: string[] = ['assetType', 'percentage', 'value'];
+  summaryDisplayedColumns: string[] = ['metric', 'value'];
+  recentPerformance: any[] = [];
   displayedColumns: string[] = ['date', 'portfolioValue'];
-allocation: AllocationItem[] = [];
+  allocation: AllocationItem[] = [];
   performance: PerformancePoint[] = [];
-
-  // PIE chart (asset allocation)
   public doughnutChartData: ChartConfiguration<'doughnut'>['data'] = {
-  labels: [],
-  datasets: [{ data: [], label: 'Allocation'}]
-};
-
-public doughnutChartOptions: ChartOptions<'doughnut'> = {
-  responsive: true,
-  maintainAspectRatio: false,
-  plugins: {
-    legend: { position: 'right',
-      labels:{
-        boxWidth:14,
-        padding:10,
-        usePointStyle: true,
+    labels: [],
+    datasets: [{ data: [], label: 'Allocation' }]
+  };
+  public doughnutChartOptions: ChartOptions<'doughnut'> = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'right',
+        labels: {
+          boxWidth: 14,
+          padding: 10,
+          usePointStyle: true,
           pointStyle: 'circle'
-      }
-     },
-    tooltip: { enabled: true },
-    
-  },
-  layout: {
-    padding: 10,
-  },
-};
-
-
-  // LINE chart (performance)
+        }
+      },
+      tooltip: { enabled: true },
+    },
+    layout: {
+      padding: 10,
+    },
+  };
   public lineChartData: ChartConfiguration<'line'>['data'] = {
     labels: [],
     datasets: [
@@ -59,88 +52,77 @@ public doughnutChartOptions: ChartOptions<'doughnut'> = {
     maintainAspectRatio: false,
     interaction: { mode: 'index', intersect: false },
     plugins: {
-      legend: { position: 'bottom',labels:{
-        boxWidth:14,
-        padding:10,
-         usePointStyle: true,
+      legend: {
+        position: 'bottom', labels: {
+          boxWidth: 14,
+          padding: 10,
+          usePointStyle: true,
           pointStyle: 'circle'
-      }},
+        }
+      },
       tooltip: { enabled: true }
     },
     scales: {
-      x: { display: true, title: { display: true, text: 'Date' },grid: { color: '#e5e7eb' }  },
-      y: { display: true, title: { display: true, text: 'Value (INR)' },grid: { color: '#e5e7eb' } }
+      x: { display: true, title: { display: true, text: 'Date' }, grid: { color: '#e5e7eb' } },
+      y: { display: true, title: { display: true, text: 'Value (INR)' }, grid: { color: '#e5e7eb' } }
     }
   };
-
   showBenchmark = true;
   selectedRange: 'all' | '6m' | '1y' = 'all';
-
-  constructor(private svc: ChartService) {}
-
+  constructor(private svc: ChartService) { }
   ngOnInit(): void {
     this.loadAllocation();
     this.loadPerformance();
   }
 
- loadAllocation() {
-  this.svc.getAllocation().subscribe(data => {
-    this.allocation = data;
-
-    // Update chart data, not options
-    this.doughnutChartData.labels = data.map(d => d.assetType);
-    this.doughnutChartData.datasets = [
-      { data: data.map(d => d.percentage), label: 'Allocation' }
-    ];
-  });
-}
-
+  loadAllocation() {
+    this.svc.getAllocation().subscribe(data => {
+      this.allocation = data;
+      this.doughnutChartData.labels = data.map(d => d.assetType);
+      this.doughnutChartData.datasets = [
+        { data: data.map(d => d.percentage), label: 'Allocation' }
+      ];
+    });
+  }
 
   loadPerformance() {
     this.svc.getPerformance().subscribe(data => {
       this.performance = data;
-        this.recentPerformance = this.performance.slice(-6);
-        this.updateDisplayedColumns();
+      this.recentPerformance = this.performance.slice(-6);
+      this.updateDisplayedColumns();
       this.updateLineChartData();
     });
   }
   ngOnChanges() {
-  this.updateDisplayedColumns();
-}
+    this.updateDisplayedColumns();
+  }
 
-updateDisplayedColumns() {
-  this.displayedColumns = this.showBenchmark
-    ? ['date', 'portfolioValue', 'benchmarkValue']
-    : ['date', 'portfolioValue'];
-}
+  updateDisplayedColumns() {
+    this.displayedColumns = this.showBenchmark
+      ? ['date', 'portfolioValue', 'benchmarkValue']
+      : ['date', 'portfolioValue'];
+  }
 
   updateLineChartData() {
-  const points = this.filterByRange(this.performance, this.selectedRange);
+    const points = this.filterByRange(this.performance, this.selectedRange);
+    this.lineChartData.labels = points.map(p => new Date(p.date).toLocaleDateString());
+    this.lineChartData.datasets = [
+      {
+        ...this.lineChartData.datasets[0],
+        data: points.map(p => p.portfolioValue)
+      },
+      {
+        ...this.lineChartData.datasets[1],
+        data: this.showBenchmark
+          ? points.map(p => p.benchmarkValue ?? 0)
+          : []
+      }
+    ];
+    this.lineChartData = { ...this.lineChartData };
+  }
 
-  // Update labels
-  this.lineChartData.labels = points.map(p => new Date(p.date).toLocaleDateString());
-
-  // Update datasets
-  this.lineChartData.datasets = [
-    {
-      ...this.lineChartData.datasets[0], // preserve label, styling
-      data: points.map(p => p.portfolioValue)
-    },
-    {
-      ...this.lineChartData.datasets[1], // preserve label, styling
-      data: this.showBenchmark
-        ? points.map(p => p.benchmarkValue ?? 0) // replace null with 0 for Chart.js
-        : []
-    }
-  ];
-
-  // Force chart update
-  this.lineChartData = { ...this.lineChartData };
-}
-
-
-  toggleBenchmark() {
-    this.showBenchmark = !this.showBenchmark;
+  toggleBenchmark(event: any) {
+    this.showBenchmark = event.checked;
     this.updateLineChartData();
     this.updateDisplayedColumns();
   }

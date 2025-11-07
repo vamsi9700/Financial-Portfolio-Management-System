@@ -7,15 +7,11 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
   styleUrls: ['./review.component.scss']
 })
 export class ReviewComponent {
-constructor(
+  constructor(
     private dialogRef: MatDialogRef<ReviewComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any
-  ) {}
+  ) { }
   close() {
     this.dialogRef.close();
   }
-
-  // confirm() {
-  //   this.dialogRef.close(true);
-  // }
 }

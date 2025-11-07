@@ -5,7 +5,6 @@ export interface AllocationItem {
   percentage: number;
   value: number;
 }
-
 export interface PerformancePoint {
   date: string; // ISO date string
   portfolioValue: number;
@@ -16,7 +15,7 @@ export interface PerformancePoint {
 })
 export class ChartService {
   constructor() { }
-   private allocation: AllocationItem[] = [
+  private allocation: AllocationItem[] = [
     { assetType: 'Stocks', percentage: 55, value: 55000 },
     { assetType: 'Bonds', percentage: 20, value: 20000 },
     { assetType: 'Mutual Funds', percentage: 15, value: 15000 },
