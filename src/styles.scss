@@ -1,0 +1,30 @@
+@import 'ngx-toastr/toastr';
+body {
+  font-family: 'Inter', 'Roboto', sans-serif;
+  font-size: 14px;
+  color: #374151; /* gray-700 */
+  line-height: 1.5;
+  background-color: #f9fafb; /* light background for dashboard */
+  margin: 0;
+  padding: 0;
+}
+.mat-button, .mat-card, .mat-slide-toggle, .mat-form-field {
+  font-family: 'Inter', 'Roboto', sans-serif !important;
+}
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  font-family: 'Inter', 'Roboto', sans-serif;
+}
+
+/* Optional: headings use Roboto Slab for contrast */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Roboto Slab', 'Inter', sans-serif;
+  font-weight: 600;
+  color: #1f2937; /* dark gray for readability */
+}
+
+// https://chatgpt.com/c/690cc53e-954c-8321-ba00-3f7360819963
+
+// https://chatgpt.com/c/690cc53e-954c-8321-ba00-3f7360819963

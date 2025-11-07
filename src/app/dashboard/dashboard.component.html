@@ -1,0 +1,169 @@
+<!-- Header -->
+<mat-card class="header-card">
+  <div class="header-left">
+    <h1>Portfolio Dashboard</h1>
+  </div>
+
+  <div class="header-right">
+    <mat-slide-toggle [(ngModel)]="showBenchmark" (change)="toggleBenchmark()" color="primary">Show Benchmark</mat-slide-toggle>
+    <div class="range-buttons">
+      <button mat-stroked-button (click)="changeRange('all')" [class.active]="selectedRange==='all'">All</button>
+      <button mat-stroked-button (click)="changeRange('6m')" [class.active]="selectedRange==='6m'">6M</button>
+      <button mat-stroked-button (click)="changeRange('1y')" [class.active]="selectedRange==='1y'">1Y</button>
+    </div>
+  </div>
+</mat-card>
+
+<!-- Dashboard Grid -->
+<div class="dashboard-grid">
+
+  <!-- Top row: Charts -->
+  <div class="chart-row">
+    <mat-card class="chart-card">
+      <h3 class="chartHeading">Asset Allocation</h3>
+      <div class="chart-wrap">
+        <canvas baseChart type="doughnut" [data]="doughnutChartData" [options]="doughnutChartOptions"></canvas>
+      </div>
+    </mat-card>
+
+    <mat-card class="chart-card">
+      <h3 class="chartHeading">Performance</h3>
+      <div class="chart-wrap">
+        <canvas baseChart type="line" [data]="lineChartData" [options]="lineChartOptions"></canvas>
+      </div>
+    </mat-card>
+  </div>
+
+  <!-- Bottom row: Other details -->
+  <div class="details-row">
+
+    <!-- <mat-card class="summary-card">
+      <h3 class="chartHeading">Summary</h3>
+      <div class="summary-grid">
+        <div class="summary-item">
+          <div class="muted">Total Portfolio</div>
+          <div class="big">₹{{ totalPortfolioValue() | number }}</div>
+        </div>
+        <div class="summary-item">
+          <div class="muted">Allocation Count</div>
+          <div class="big">{{ allocation.length }}</div>
+        </div>
+      </div>
+    </mat-card> -->
+
+    <!-- <mat-card class="alloc-card">
+      <h3 class="chartHeading">Asset Allocation Details</h3>
+      <div class="alloc-list">
+        <div class="alloc-item" *ngFor="let a of allocation">
+          <div class="label">{{ a.assetType }}</div>
+          <div class="value">{{ a.percentage }}% • ₹{{ a.value | number }}</div>
+        </div>
+      </div>
+    </mat-card> -->
+<mat-card class="alloc-card">
+  <h3 class="chartHeading">Asset Allocation Details</h3>
+
+  <table mat-table [dataSource]="allocation" class="mat-elevation-z2 alloc-table">
+
+    <!-- Asset Type Column -->
+    <ng-container matColumnDef="assetType">
+      <th mat-header-cell *matHeaderCellDef>Asset Type</th>
+      <td mat-cell *matCellDef="let element">{{ element.assetType }}</td>
+    </ng-container>
+
+    <!-- Percentage Column -->
+    <ng-container matColumnDef="percentage">
+      <th mat-header-cell *matHeaderCellDef>Percentage</th>
+      <td mat-cell *matCellDef="let element">{{ element.percentage }}%</td>
+    </ng-container>
+
+    <!-- Value Column -->
+    <ng-container matColumnDef="value">
+      <th mat-header-cell *matHeaderCellDef>Value (₹)</th>
+      <td mat-cell *matCellDef="let element">₹{{ element.value | number }}</td>
+    </ng-container>
+
+    <!-- Header and Row Definitions -->
+    <tr mat-header-row *matHeaderRowDef="allocDisplayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: allocDisplayedColumns;"></tr>
+  </table>
+</mat-card>
+<mat-card class="summary-card">
+  <h3 class="chartHeading">Summary</h3>
+
+  <table mat-table [dataSource]="summaryData" class="mat-elevation-z2 summary-table">
+
+    <!-- Metric Column -->
+    <ng-container matColumnDef="metric">
+      <th mat-header-cell *matHeaderCellDef>Metric</th>
+      <td mat-cell *matCellDef="let element">{{ element.metric }}</td>
+    </ng-container>
+
+    <!-- Value Column -->
+    <ng-container matColumnDef="value">
+      <th mat-header-cell *matHeaderCellDef>Value</th>
+      <td mat-cell *matCellDef="let element">
+        <span *ngIf="element.metric === 'Total Portfolio'">
+          ₹{{ totalPortfolioValue() | number }}
+        </span>
+        <span *ngIf="element.metric === 'Allocation Count'">
+          {{ allocation.length }}
+        </span>
+      </td>
+    </ng-container>
+
+    <!-- Header and Row Definitions -->
+    <tr mat-header-row *matHeaderRowDef="summaryDisplayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: summaryDisplayedColumns;"></tr>
+  </table>
+</mat-card>
+    <!-- <mat-card class="recent-card">
+      <h3 class="chartHeading">Recent Values</h3>
+      <table class="small-table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Portfolio</th>
+            <th *ngIf="showBenchmark">Benchmark</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let p of (performance | slice:-6)">
+            <td>{{ p.date | date:'mediumDate' }}</td>
+            <td>₹{{ p.portfolioValue | number }}</td>
+            <td *ngIf="showBenchmark">₹{{ p.benchmarkValue | number }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </mat-card> -->
+<mat-card class="recent-card">
+  <h3 class="chartHeading">Recent Values</h3>
+
+  <table mat-table [dataSource]="recentPerformance" class="mat-elevation-z2 small-mat-table">
+
+    <!-- Date Column -->
+    <ng-container matColumnDef="date">
+      <th mat-header-cell *matHeaderCellDef>Date</th>
+      <td mat-cell *matCellDef="let p">{{ p.date | date: 'mediumDate' }}</td>
+    </ng-container>
+
+    <!-- Portfolio Column -->
+    <ng-container matColumnDef="portfolioValue">
+      <th mat-header-cell *matHeaderCellDef>Portfolio</th>
+      <td mat-cell *matCellDef="let p">₹{{ p.portfolioValue | number }}</td>
+    </ng-container>
+
+    <!-- Benchmark Column (conditional) -->
+    <ng-container *ngIf="showBenchmark" matColumnDef="benchmarkValue">
+      <th mat-header-cell *matHeaderCellDef>Benchmark</th>
+      <td mat-cell *matCellDef="let p">₹{{ p.benchmarkValue | number }}</td>
+    </ng-container>
+
+    <!-- Header and Row Definitions -->
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+</mat-card>
+
+  </div>
+</div>
